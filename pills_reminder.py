@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
@@ -38,6 +39,9 @@ CHAT_ID = os.getenv("CHAT_ID")
 
 async def tabex_loop(app: Application):
     while True:
+        with open("state.json", "r") as f:
+            state = json.load(f)
+        
         await app.bot.send_message(
             chat_id=CHAT_ID,
             text="Ia pastila",
