@@ -42,7 +42,7 @@ def persist_state(state):
     with open("state.json", "w") as f:
         json.dump(state, f, indent=4)
 
-testing = True
+testing = False
 
 async def sleep_until(target: datetime):
     if testing:
