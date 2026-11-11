@@ -2,6 +2,7 @@ import os
 import asyncio
 import json
 from telegram import Update
+from telegram.error import NetworkError, TimedOut
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
 from datetime import date, datetime, timedelta, time
@@ -85,11 +86,15 @@ async def tabex_loop(app: Application):
             await sleep_until(last_pill_at + timedelta(hours=interval))
         else: 
             await sleep_until(datetime.combine(date.today(), time(6, 0)))
-        
-        await app.bot.send_message(
-            chat_id=CHAT_ID,
-            text=f'Ziua {days_since_start+1}. Ia pastila {state["pills_total"] + 1}/{max}',
-        )
+
+        try:
+            await app.bot.send_message(
+                chat_id=CHAT_ID,
+                text=f'Ziua {days_since_start+1}. Ia pastila {state["pills_total"] + 1}/{max}',
+            )
+        except (NetworkError, TimedOut):
+            await asyncio.sleep(5)
+            continue
 
         await pill_taken_event.wait()
         pill_taken_event.clear()
